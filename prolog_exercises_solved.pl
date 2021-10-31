@@ -1,5 +1,10 @@
 %Exercises about the PROLOG building blocks
 
+
+
+
+%LIST
+
 % search(Elem, List)
 %test: Yes: search(3, [4,5 ,2, 3, 5]). 		No:search(32, [4,5 ,2, 3, 5]).
 search(E, [E| _]):-!.
@@ -101,6 +106,32 @@ dropAll(E, [E|T1], L):- dropAll(E, T1, L).
 dropAll(E, [H|T1], [H|T2]):- dropAll(E, T1, T2).
 dropAll(E, [E|T], T).
 
+%double
+%test: yes double([0, 1],[0,1,0,1]).	double([0, 1, 5],[0,1,5, 0,1, 5]).		no: double([0, 1],[0,1,8, 0,1]).	double([0, 1, 5],[0,1,0,1]).
+double(L, OL):- append(L, L, OL).
+
+%times
+%test: times([0], 3, [0,0,0]). 	No: times([0], 2, [0,0,0]).
+times(_, 0, []).
+times(L, N1, R1) :- N1 > 0, N2 is N1-1, times(L, N2, R2), append(L, R2, R1).
+%listFirsts
+%test: listsFirst([[a,c,d],[b]],[a,b])
+listsFirst([], []).
+listsFirst([[First|_]|Xs], [First|Ys]) :- listsFirst(Xs, Ys).
+
+%reverse
+%test: Yes: reverse([1,2, 3, 4],[4, 3,2,1]). No: reverse([1,2, 3, 4],[4, 2,1]).
+reverse(L, OL):- reverseAccumulator(L, [],OL).
+
+reverseAccumulator([H|T], A, OL):- reverseAccumulator(T, [H|A], OL).
+reverseAccumulator([H|T],A,A).
+
+
+
+
+
+%GRAPH
+
 %fromList(List, Graph)
 %test Yes: fromList([10,20,30],[e(10,20),e(20,30)]).
 fromList([_],[]).
@@ -119,43 +150,19 @@ dropNode(G, N, O):-
 	dropAll(G, e(N, _), G1),
 	dropAll(G2, e(_,N),O).
 
-% reaching(G, N, L); all the nodes that can be reached in 1 step from Node possibly use findall, looking for e(Node,_) combined with member(?Elem,?List)
-%test: reaching([e(1,2),e(1,2),e(2,3)],1,L). -> L/[2,2]).
-        %N: nodo di cui devo trovare i successori
-        %G: grafo
-        %O: lista dei successori
-        %S: nodo successivo che vado a considerare
-        %member(e(N,S), G): restituisce true se e solo se e(N,S) è una tupla del grafo
-        %findall(S,member(e(N,S),G),O): se il goal passato come secondo argomento ha un risultato
-        %allora unifica il terzo argomento con il primo
+% reaching(G, N, L); all the nodes that can be reached in 1 step
+%test: reaching([e(1,2),e(1,2),e(2,3)],1,[2,2]).
         %-> se la tupla passata alla member è presente nel grafo allora S è figlio di N e quindi va aggiunto alla lista dei suoi succcessori
+reaching(Graph,Node,SuccessorsList):-
+	findall(Successor,member(e(Node,Successor),Graph),SuccessorsList).%if member is satisfied-> Successor is a successor of
 
 %anypath(+Graph, +Node1, +Node2, -ListPath) a path from Node1 to Node2 if there are many path, they are showed 1-by-1
-%test: anypath([e(1,2),e(1,3),e(2,3)],1,3,L).
-%output: – L/[e(1,2),e(2,3)] e L/[e(1,3)]
+%test: anypath([e(1,2),e(1,3),e(2,3)],1,3,[e(1,2),e(2,3)]).
+
+anypath(G,N1,N2,[e(N1,N2)]):- member(e(N1,N2),G),!.                           %– a path from N1 to N2 exists if there is a e(N1,N2)
+anypath(G,N1,N2,[e(N1,N3)|LP]):- member(e(N1,N3),G),                     %– a path from N1 to N2 is OK if N3 can be reached from N1,
+                                anypath(G,N3,N2,LP).                     %       and then there is a path from N2 to N3, recursively
 
 %allreaching(+Graph, +Node, -List) all the nodes that can be reached from Node. Suppose the graph is NOT circular!. Use findall and anyPath!
 %test: allreaching([e(1,2),e(2,3),e(3,5)],1,[2,3,5]).%se esiste un percorso tra N e un nodo successivo allora tale nodo viene aggiunto alla lista finale
-
-%2.7 grid-like nets
-%Create a graph for the predicates implemented so far. Try to generate all paths from a node to another,limiting the maximum number of hops
-
-%EXTRA double
-%test: yes double([0, 1],[0,1,0,1]).	double([0, 1, 5],[0,1,5, 0,1, 5]).		no: double([0, 1],[0,1,8, 0,1]).	double([0, 1, 5],[0,1,0,1]).
-double(L, OL):- append(L, L, OL).
-
-%EXTRA times
-%test: times([0], 3, [0,0,0]). 	No: times([0], 2, [0,0,0]).
-times(_, 0, []).
-times(L, N1, R1) :- N1 > 0, N2 is N1-1, times(L, N2, R2), append(L, R2, R1).
-
-%test: listsFirst([[a,c,d],[b]],[a,b])
-listsFirst([], []).
-listsFirst([[First|_]|Xs], [First|Ys]) :- listsFirst(Xs, Ys).
-
-%reverse
-%test: Yes: reverse([1,2, 3, 4],[4, 3,2,1]). No: reverse([1,2, 3, 4],[4, 2,1]).
-reverse(L, OL):- reverseAccumulator(L, [],OL).
-
-reverseAccumulator([H|T], A, OL):- reverseAccumulator(T, [H|A], OL).
-reverseAccumulator([H|T],A,A).
+allreaching(G,N,L):- findall(S,anypath(G,N,S,_),L).
