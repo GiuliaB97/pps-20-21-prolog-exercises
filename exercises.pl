@@ -8,9 +8,9 @@
 
 % size(List, Size)
 
-%sizeZero(List, Size)	%test: sizeZero([1,2], s(s(zero))).
+% sizeZero(List, Size)
 
-%sum(List, Sum)
+% sum(List, Sum)
 
 % max(List, Max)
 
@@ -18,7 +18,7 @@
 
 % same(List1,List2)
 
-%allBigger(L, L).
+% allBigger(L, L).
 
 % sublist(List1,List2)
 
@@ -65,6 +65,7 @@
 
 
 % times
-%test: times([0], 3, [0,0,0])
+% test: times([0], 3, [0,0,0])
+
 % proj
-%test: proj([[a,c,d],[b]],[a,b])
+% test: proj([[a,c,d],[b]],[a,b])
