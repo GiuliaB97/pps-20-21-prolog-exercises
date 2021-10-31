@@ -43,6 +43,7 @@ max([H|T], Max):- max(T,TailMax), H=<TailMax, Max is TailMax, !.
 
 % maxMin(List,Max,Min)
 %test: Yes: maxMin([1,2, 9, 0], 9, 0). 		No:maxMin([1,2, 9, 0], 3, 0).
+
 maxMin([], 0, 0).
 maxMin([H|T], Max, Min):- maxMin(T, TailMax, TailMin), H>TailMax, H=<TailMin, Max is H, Min is H, !.
 maxMin([H|T], Max, Min):- maxMin(T, TailMax, TailMin), H=<TailMax, H=<TailMin, Max is TailMax, Min is H, !.
@@ -129,21 +130,15 @@ dropNode(G, N, O):-
         %allora unifica il terzo argomento con il primo
         %-> se la tupla passata alla member è presente nel grafo allora S è figlio di N e quindi va aggiunto alla lista dei suoi succcessori
 
-
-%Advanced exerices
-%2.5 anypath(+Graph, +Node1, +Node2, -ListPath)
-% a path from Node1 to Node2 if there are many path, they are showed 1-by-1
+%anypath(+Graph, +Node1, +Node2, -ListPath) a path from Node1 to Node2 if there are many path, they are showed 1-by-1
 %test: anypath([e(1,2),e(1,3),e(2,3)],1,3,L).
 %output: – L/[e(1,2),e(2,3)] e L/[e(1,3)]
 
-%2.6 allreaching(+Graph, +Node, -List)
-% all the nodes that can be reached from Node. Suppose the graph is NOT circular!. Use findall and anyPath!
-%test: allreaching([e(1,2),e(2,3),e(3,5)],1,[2,3,5]).
-        %se esiste un percorso tra N e un nodo successivo allora tale nodo viene aggiunto alla lista finale
+%allreaching(+Graph, +Node, -List) all the nodes that can be reached from Node. Suppose the graph is NOT circular!. Use findall and anyPath!
+%test: allreaching([e(1,2),e(2,3),e(3,5)],1,[2,3,5]).%se esiste un percorso tra N e un nodo successivo allora tale nodo viene aggiunto alla lista finale
 
 %2.7 grid-like nets
-%During last lesson we see how to generate a gridlike network. Adapt that code to create a graph for the predicates implemented so far.
-% Try to generate all paths from a node to another,limiting the maximum number of hops
+%Create a graph for the predicates implemented so far. Try to generate all paths from a node to another,limiting the maximum number of hops
 
 %EXTRA double
 %test: yes double([0, 1],[0,1,0,1]).	double([0, 1, 5],[0,1,5, 0,1, 5]).		no: double([0, 1],[0,1,8, 0,1]).	double([0, 1, 5],[0,1,0,1]).
