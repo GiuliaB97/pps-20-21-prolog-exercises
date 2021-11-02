@@ -5,7 +5,7 @@
 
 %LIST
 
-% search(Elem, List)
+% search(Elem, List) -> Member
 %test: Yes: search(3, [4,5 ,2, 3, 5]). 		No:search(32, [4,5 ,2, 3, 5]).
 search(E, [E| _]):-!.
 search(E, [_|T]):- search(E, T).
@@ -137,32 +137,29 @@ reverseAccumulator([H|T],A,A).
 fromList([_],[]).
 fromList([H1, H2|T1], [e(H1, H2)|T2]):-fromList([H2|T1],T2).
 
-%fromCircList
+%fromCircList(List, Graph)
 %test: Yes: fromCircList([10,20,30],[e(10,20),e(20,30),e(30,10)]).
-fromCircList([H1|T1], G):-
-	append([H1|T1], [H1], L),
+fromCircList([H|T], G):-
+	append([H|T], [H], L),
 	fromList(L, G).
 
 % dropNode(+Graph, +Node, -OutGraph); drop all edges starting and leaving from a Node
 %test dropNode([e(1,2),e(1,3),e(2,3)],1,[e(2,3)]).
+dropNode(Graph, Node, OutGraph):-
+	dropAll(Graph, e(N, _), TmpOutGraph),
+	dropAll(TmpOutGraph, e(_, Node),OutGraph).
 
-dropNode(G, N, O):-
-	dropAll(G, e(N, _), G1),
-	dropAll(G2, e(_,N),O).
-
-% reaching(G, N, L); all the nodes that can be reached in 1 step
+% reaching(+Graph, +Node, -SuccessorList); all the nodes that can be reached in 1 step
 %test: reaching([e(1,2),e(1,2),e(2,3)],1,[2,2]).
-        %-> se la tupla passata alla member è presente nel grafo allora S è figlio di N e quindi va aggiunto alla lista dei suoi succcessori
-reaching(Graph,Node,SuccessorsList):-
-	findall(Successor,member(e(Node,Successor),Graph),SuccessorsList).%if member is satisfied-> Successor is a successor of
+reaching(Graph,Node,SuccessorList):-
+	findall(Successor, search(e(Node,Successor),Graph), SuccessorList).
 
-%anypath(+Graph, +Node1, +Node2, -ListPath) a path from Node1 to Node2 if there are many path, they are showed 1-by-1
+% anypath(+Graph, +Node1, +Node2, -ListPath) a path from Node1 to Node2 if there are many path, they are showed 1-by-1
 %test: anypath([e(1,2),e(1,3),e(2,3)],1,3,[e(1,2),e(2,3)]).
+anypath(G,N1,N2,[e(N1,N2)]):- search(e(N1,N2),G),!.                           %– a path from N1 to N2 exists if there is a e(N1,N2)
+anypath(G,N1,N2,[e(N1,N3)|T]):- search(e(N1,N3),G),                     %– a path from N1 to N2 is OK if N3 can be reached from N1,
+                                anypath(G,N3,N2,T).                     %       and then there is a path from N2 to N3, recursively
 
-anypath(G,N1,N2,[e(N1,N2)]):- member(e(N1,N2),G),!.                           %– a path from N1 to N2 exists if there is a e(N1,N2)
-anypath(G,N1,N2,[e(N1,N3)|LP]):- member(e(N1,N3),G),                     %– a path from N1 to N2 is OK if N3 can be reached from N1,
-                                anypath(G,N3,N2,LP).                     %       and then there is a path from N2 to N3, recursively
-
-%allreaching(+Graph, +Node, -List) all the nodes that can be reached from Node. Suppose the graph is NOT circular!. Use findall and anyPath!
+% allreaching(+Graph, +Node, -List) all the nodes that can be reached from Node. Suppose the graph is NOT circular!. Use findall and anyPath!
 %test: allreaching([e(1,2),e(2,3),e(3,5)],1,[2,3,5]).%se esiste un percorso tra N e un nodo successivo allora tale nodo viene aggiunto alla lista finale
-allreaching(G,N,L):- findall(S,anypath(G,N,S,_),L).
+allreaching(Graph,Node,List):- findall(Successor,anypath(Graph,Node,Successor,_),List).
