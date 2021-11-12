@@ -25,30 +25,29 @@ search2AnyElemBetween(E, [E, _, E|T]).
 search2Occurence(E, [H|T]):-search2Occurence(E, T).
 search2Occurence(E, [E|T]):-search(E, T).
 
-%size(List, Size)
-%test: Yes: size([1,2], 2).		No: size([1,2], 5).
-size([], 0).
-size([H|T], N):- M2 is N-1, size(T, M2).	%size([H|T], N):- size(T, M2), N is M2+1.
-
 %sizeZero(List, Size)
 %test: Yes sizeZero([1,2], s(s(zero))).		No: sizeZero([1,2], s(zero)).
 sizeZero([], zero).
 sizeZero([H|T], s(N)):- sizeZero(T, N).
 
+%size(List, Size)
+%test: Yes: size([1,2], 2).		No: size([1,2], 5).
+size([], 0).
+size([H|T], N):- N2 is N-1, size(T, N2).		%size([H|T], N):- size(T, M2), N is M2+1.
+
 %sum(List, Sum)
 %test: Yes: sum([1,2], 3).		No:  sum([1,2], 6).
 sum([], 0).
-sum([H|T], N):- M2 is N-H, sum(T, M2).		%sum([H|T], N):- sum(T, M2), N is H+ M2.
+sum([H|T], N):- N2 is N-H, sum(T, N2). 		%sum([H|T], N):- sum(T, N2), N is N2+H.
 
 %max(List, Max)
 %test: Yes: max([1,2, 0], 2).		No:  sum([1,2, 0], 1).
 max([], 0).
-max([H|T], Max):- max(T, TailMax), H>TailMax, Max is H, !.
-max([H|T], Max):- max(T,TailMax), H=<TailMax, Max is TailMax, !.
+max([H|T], Max):- max(T, TailMax), TailMax>H, Max is Max,!.
+max([H|T], Max):- max(T, TailMax), TailMax=<H, Max is H,!.
 
 % maxMin(List,Max,Min)
 %test: Yes: maxMin([1,2, 9, 0], 9, 0). 		No:maxMin([1,2, 9, 0], 3, 0).
-
 maxMin([], 0, 0).
 maxMin([H|T], Max, Min):- maxMin(T, TailMax, TailMin), H>TailMax, H=<TailMin, Max is H, Min is H, !.
 maxMin([H|T], Max, Min):- maxMin(T, TailMax, TailMin), H=<TailMax, H=<TailMin, Max is TailMax, Min is H, !.
@@ -57,29 +56,29 @@ maxMin([H|T], Max, Min):- maxMin(T, TailMax, TailMin), H>TailMax, H>TailMin, Max
 
 % same(List1,List2)
 %test: Yes:same([1, 2], [1,2]).		No: same([1, 2], [0,1,2]).
-same([E], [E]).
-same([H|T1], [H|T2]):-same(T1, T2).
+same([], []).
+same([H|T1], [H|T2]):- same(T1, T2).
 
 %allBigger(L, L).
 %test: Yes:allBigger([11, 22, 33], [0,1,2]).	 No:allBigger([11,0, 22, 33], [0,1,2]).
-allBigger([E1], [E2]):-E1>E2.
-allBigger([H1|T1], [H2|T2]):-H1>H2,allBigger(T1, T2).
+allBigger([H1|T1], [H2|T2]):- H1>H2,allBigger(T1, T2).
+allBigger([H1], [H2]):- H1>H2.
 
 % sublist(List1,List2)
-%test: YEs: sublist([1,2,3,4],[2,3]).		No: sublist([1,2,3,4],[2,3, 5]).
-sublist([_], []).
-sublist([H1|T1], [H1|T2]):-sublist(T1, T2).
-sublist([H1|T1], [H2|T2]):-sublist(T1, [H2|T2]), !.					%cut: useful if the first List is longer of the second
+%test: Yes: sublist([1,2,3,4],[2,3]).		No: sublist([1,2,3,4],[2,3, 5]).
+sublist([H|T], []).
+sublist([H|T1],[H|T2]):-sublist(T1, T2),!.
+sublist([H1|T1], [H2|T2]):-sublist(T1, [H2|T2]), !.
 
 % seq(N,List)
 %test: Yes: seq(2, [0,0]). 	No: seq(2, [0,0,0]).
 seq(0, []).
-seq(N, [0|T]):- N2 is N-1, seq(N2, T).		%seq(N, [0|T]):- seq(N2, T), N is N2 +1.
+seq(N, [0|T]):- N2 is N-1, seq(N2, T). %seq(N, [0|T]):-seq(N2, T), N is N2+1.
 
 % seqR(N,List)
-% test: Yes: seqR(3,[3,2,1,0])		seqR(3, [3,2,1]
+% test: Yes: seqR(3,[3,2,1,0]).		seqR(3, [3,2,1]).
 seqR(0, [_]).
-seqR(N, [N|T]):- N2 is N-1, seqR(N2, T).	%seqR(N, [N|T]):- seqR(N2, T), N is N2+1, !.
+seqR(N, [N|T]):- N2 is N-1, seqR(N2, T).	%seqR(N, [N|T]):- seqR(N2, T), N is N2+1.
 
 % seqL(N,List)
 % test: Yes: seqL(3,[0,1,2,3])		seqL(3, [1, 2,3]).
