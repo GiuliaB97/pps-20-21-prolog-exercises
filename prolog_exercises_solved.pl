@@ -7,23 +7,23 @@
 
 % search(Elem, List) -> Member
 %test: Yes: search(3, [4,5 ,2, 3, 5]). 		No:search(32, [4,5 ,2, 3, 5]).
-search(E, [E| _]):-!.
-search(E, [_|T]):- search(E, T).
+search(E, [H|T]):-search(E,T).
+search(E, [E|_]).
 
 % search2Consecutive(Elem, List)
 %test: Yes: search2Consecutive(3, [4,5 ,2, 3,3, 5]).		No search2Consecutive(3, [4,5 ,2, 3,9, 3, 5]).
-search2Consecutive(E, [E, E| _]).									%cannot add cut->it will not find the second E
-search2Consecutive(E, [_|T]):- search2Consecutive(E, T), !.
+search2Consecutive(E, [H|T]):-search2Consecutive(E, T).
+search2Consecutive(E, [E,E|_]).
 
 % search2AnyElemBetween(Elem, List)
 %test: Yes search2AnyElemBetween(3, [4,5 ,2, 3,0, 3, 5]).	No: search2AnyElemBetween(3, [4,5 ,2, 3, 3, 5]).
-search2AnyElemBetween(E, [E, _,E| _]).
-search2AnyElemBetween(E, [_|T]):- search2AnyElemBetween(E, T), !.
+search2AnyElemBetween(E, [H|T]):-search2AnyElemBetween(E, T).
+search2AnyElemBetween(E, [E, _, E|T]).
 
 % search2Occurence(Elem, List)
 %test: Yes: search2Occurence(3, [4,5 ,2, 3,9, 3, 5]). 		No: search2Occurence(3, [4,5 ,2, 3,9, 3, 5]).
-search2Occurence(E, [E| T]):- search(E, T).
-search2Occurence(E, [_|T]):- search2Occurence(E, T), !.
+search2Occurence(E, [H|T]):-search2Occurence(E, T).
+search2Occurence(E, [E|T]):-search(E, T).
 
 %size(List, Size)
 %test: Yes: size([1,2], 2).		No: size([1,2], 5).
