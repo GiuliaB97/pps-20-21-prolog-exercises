@@ -40,6 +40,15 @@ size([H|T], N):- N2 is N-1, size(T, N2).		%size([H|T], N):- size(T, M2), N is M2
 sum([], 0).
 sum([H|T], N):- N2 is N-H, sum(T, N2). 		%sum([H|T], N):- sum(T, N2), N is N2+H.
 
+%2.4: 
+%average(list, count, sum,avarage).
+average(L, A) :- avarage(L,0,0,A).
+average([], CS,A) :- A is S/C.
+average([X|Xs], C, S, A) :-
+	C2 is C + 1,
+	S2 is S + X,
+	average(Xs, C2, S2, A).
+	
 %max(List, Max)
 %test: Yes: max([1,2, 0], 2).		No:  sum([1,2, 0], 1).
 max([], 0).
@@ -53,6 +62,12 @@ maxMin([H|T], Max, Min):- maxMin(T, TailMax, TailMin), H>TailMax, H=<TailMin, Ma
 maxMin([H|T], Max, Min):- maxMin(T, TailMax, TailMin), H=<TailMax, H=<TailMin, Max is TailMax, Min is H, !.
 maxMin([H|T], Max, Min):- maxMin(T, TailMax, TailMin), H=<TailMax, H>TailMin, Max is TailMax, Min is TailMin, !.
 maxMin([H|T], Max, Min):- maxMin(T, TailMax, TailMin), H>TailMax, H>TailMin, Max is H, Min is TailMin, !.
+
+%minMax idiomatic version
+minMax([E], E, E).
+minMax([H|T],H,Max) :- minMax(T,Min,Max), H=<Min.		%Min must be updated
+minMax([H|T],Min,Max) :- minMax(T,Min,Max), H>Min, H<Max.	%Min and Max must not be updated
+minMax([H|T],Min,H) :- minMax(T,Min,Max), H>=Max.		%Max must be updated
 
 % same(List1,List2)
 %test: Yes:same([1, 2], [1,2]).		No: same([1, 2], [0,1,2]).
