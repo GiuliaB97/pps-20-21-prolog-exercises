@@ -87,38 +87,40 @@ seqL(N, [H1, H2|T]):-H1<H2, N2 is N-1, seqL(N2, [H2|T]). 	%seqL(N, [H1, H2|T]):-
 
 % dropAny(Elem,List,OutList)
 %test: Yes: dropAny(3,[0,1,2,3,7], [0,1,2,7]).		No: dropAny( 3,[0,1,2,3,7], [0,1,2,3,7]).
+dropAny(E, [H|T1], [H|T2]):-dropAny(E, T1, T2).
 dropAny(E, [E|T], T).
-dropAny(E, [H|T1], [H|T2]):- dropAny(E, T1, T2), !.
 
 % dropFirst(Elem,List,OutList)
 %test: Yes: dropFirst( 3,[0,1,2,3,7,3], [0,1,2,7,3]).		No: dropFirst( 3,[0,1,2,3,7,3], [0,1,2,3,7,3]).
 dropFirst(E, [E|T], T):-!.
-dropFirst(E, [H|T1], [H|T2]):- dropFirst(E, T1, T2).
+dropFirst(E, [H|T1], [H|T2]):-dropFirst(E, T1, T2).
 
 % dropLast(Elem,List,OutList)
 %test: Yes: dropLast( 3,[0,1,2,3,7,3], [0,1,2,3,7]).		No: dropLast( 3,[0,1,2,3,7,3], [0,1,2,3,7,3]).
-dropLast(E, [H|T1], [H|T2]):- dropLast(E, T1, T2).
+dropLast(E, [H|T1], [H|T2]):-dropLast(E, T1, T2),!.
 dropLast(E, [E|T], T).
 
 % dropAll(Elem,List,OutList)
-dropAll(E, [E|T1], L):- dropAll(E, T1, L).
-dropAll(E, [H|T1], [H|T2]):- dropAll(E, T1, T2).
+%test: Yes: dropAll( 3,[0,1,2,3,7,3], [0,1,2,7]).		No: dropLast( 3,[0,1,2,3,7,3], [0,1,2,3,7,3]).
+dropAll(E, [H|T1], [H|T2]):-dropAll(E, T1, T2),!.
+dropAll(E, [E|T], L):-dropAll(E, T, L),!.
 dropAll(E, [E|T], T).
 
-%double
+%double(List, OutList)
 %test: yes double([0, 1],[0,1,0,1]).	double([0, 1, 5],[0,1,5, 0,1, 5]).		no: double([0, 1],[0,1,8, 0,1]).	double([0, 1, 5],[0,1,0,1]).
-double(L, OL):- append(L, L, OL).
+double(L, OL):-append(L,L, OL).
 
-%times
+%times(List, Number, OutList)
 %test: times([0], 3, [0,0,0]). 	No: times([0], 2, [0,0,0]).
 times(_, 0, []).
 times(L, N1, R1) :- N1 > 0, N2 is N1-1, times(L, N2, R2), append(L, R2, R1).
-%listFirsts
+
+%listFirsts(List1, List2, OutList)
 %test: listsFirst([[a,c,d],[b]],[a,b])
 listsFirst([], []).
 listsFirst([[First|_]|Xs], [First|Ys]) :- listsFirst(Xs, Ys).
 
-%reverse
+%reverse(List, OutList)
 %test: Yes: reverse([1,2, 3, 4],[4, 3,2,1]). No: reverse([1,2, 3, 4],[4, 2,1]).
 reverse(L, OL):- reverseAccumulator(L, [],OL).
 
