@@ -56,7 +56,7 @@ max([H|T], Max):- max(T, TailMax), TailMax>H, Max is Max,!.
 max([H|T], Max):- max(T, TailMax), TailMax=<H, Max is H,!.
 
 % maxMin(List,Max,Min)
-%test: Yes: maxMin([1,2, 9, 0], 9, 0). 		No:maxMin([1,2, 9, 0], 3, 0).
+%test: Yes: maxMin([1,2, 9, 0], 9, 0). 		No: maxMin([1,2, 9, 0], 3, 0).
 maxMin([], 0, 0).
 maxMin([H|T], Max, Min):- maxMin(T, TailMax, TailMin), H>TailMax, H=<TailMin, Max is H, Min is H, !.
 maxMin([H|T], Max, Min):- maxMin(T, TailMax, TailMin), H=<TailMax, H=<TailMin, Max is TailMax, Min is H, !.
@@ -91,12 +91,12 @@ seq(0, []).
 seq(N, [0|T]):- N2 is N-1, seq(N2, T). %seq(N, [0|T]):-seq(N2, T), N is N2+1.
 
 % seqR(N,List)
-% test: Yes: seqR(3,[3,2,1,0]).		seqR(3, [3,2,1]).
+% test: Yes: seqR(3,[3,2,1,0]).		No: seqR(3, [3,2,1]).
 seqR(0, [_]).
 seqR(N, [N|T]):- N2 is N-1, seqR(N2, T).	%seqR(N, [N|T]):- seqR(N2, T), N is N2+1.
 
 % seqL(N,List)
-% test: Yes: seqL(3,[0,1,2,3])		seqL(3, [1, 2,3]).
+% test: Yes: seqL(3,[0,1,2,3])		No: seqL(3, [1, 2,3]).
 seqL(0, [_]).
 seqL(N, [H1, H2|T]):-H1<H2, N2 is N-1, seqL(N2, [H2|T]). 	%seqL(N, [H1, H2|T]):-seqL(N2, [H2|T]), H1<H2, N is N2+1.
 
