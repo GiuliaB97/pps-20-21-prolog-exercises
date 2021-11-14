@@ -7,33 +7,33 @@
 
 % search(Elem, List) -> Member
 %test: Yes: search(3, [4,5 ,2, 3, 5]). 		No:search(32, [4,5 ,2, 3, 5]).
-search(E, [H|T]):-search(E,T).
+search(E, [_|T]):-search(E,T).
 search(E, [E|_]).
 
 % search2Consecutive(Elem, List)
 %test: Yes: search2Consecutive(3, [4,5 ,2, 3,3, 5]).		No search2Consecutive(3, [4,5 ,2, 3,9, 3, 5]).
-search2Consecutive(E, [H|T]):-search2Consecutive(E, T).
+search2Consecutive(E, [_|T]):-search2Consecutive(E, T).
 search2Consecutive(E, [E,E|_]).
 
 % search2AnyElemBetween(Elem, List)
 %test: Yes search2AnyElemBetween(3, [4,5 ,2, 3,0, 3, 5]).	No: search2AnyElemBetween(3, [4,5 ,2, 3, 3, 5]).
-search2AnyElemBetween(E, [H|T]):-search2AnyElemBetween(E, T).
+search2AnyElemBetween(E, [_|T]):-search2AnyElemBetween(E, T).
 search2AnyElemBetween(E, [E, _, E|T]).
 
 % search2Occurence(Elem, List)
 %test: Yes: search2Occurence(3, [4,5 ,2, 3,9, 3, 5]). 		No: search2Occurence(3, [4,5 ,2, 3,9, 3, 5]).
-search2Occurence(E, [H|T]):-search2Occurence(E, T).
+search2Occurence(E, [_|T]):-search2Occurence(E, T).
 search2Occurence(E, [E|T]):-search(E, T).
 
-%sizeZero(List, Size)
-%test: Yes sizeZero([1,2], s(s(zero))).		No: sizeZero([1,2], s(zero)).
-sizeZero([], zero).
-sizeZero([H|T], s(N)):- sizeZero(T, N).
+%sizeNaturalNumber(List, Size)
+%test: Yes sizeNaturalNumber([1,2], s(s(zero))).		No: sizeNaturalNumber([1,2], s(zero)).
+sizeNaturalNumber([], zero).
+sizeNaturalNumber([_|T], s(N)):- sizeNaturalNumber(T, N).
 
 %size(List, Size)
 %test: Yes: size([1,2], 2).		No: size([1,2], 5).
 size([], 0).
-size([H|T], N):- N2 is N-1, size(T, N2).		%size([H|T], N):- size(T, M2), N is M2+1.
+size([_|T], N):- N2 is N-1, size(T, N2).		%size([_|T], N):- size(T, M2), N is M2+1.
 
 %sum(List, Sum)
 %test: Yes: sum([1,2], 3).		No:  sum([1,2], 6).
@@ -50,7 +50,7 @@ average([X|Xs], C, S, A) :-
 	average(Xs, C2, S2, A).
 	
 %max(List, Max)
-%test: Yes: max([1,2, 0], 2).		No:  sum([1,2, 0], 1).
+%test: Yes: max([1,2, 0], 2).		No:  max([1,2, 0], 1).
 max([], 0).
 max([H|T], Max):- max(T, TailMax), TailMax>H, Max is Max,!.
 max([H|T], Max):- max(T, TailMax), TailMax=<H, Max is H,!.
@@ -77,7 +77,7 @@ same([H|T1], [H|T2]):- same(T1, T2).
 %allBigger(L, L).
 %test: Yes:allBigger([11, 22, 33], [0,1,2]).	 No:allBigger([11,0, 22, 33], [0,1,2]).
 allBigger([H1|T1], [H2|T2]):- H1>H2,allBigger(T1, T2).
-allBigger([H1], [H2]):- H1>H2.
+allBigger([E1], [E2]):- E1>E2.
 
 % sublist(List1,List2)
 %test: Yes: sublist([1,2,3,4],[2,3]).		No: sublist([1,2,3,4],[2,3, 5]).
