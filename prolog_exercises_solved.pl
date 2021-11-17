@@ -142,6 +142,8 @@ reverse(L, OL):- reverseAccumulator(L, [],OL).
 reverseAccumulator([H|T], A, OL):- reverseAccumulator(T, [H|A], OL).
 reverseAccumulator([H|T],A,A).
 
+reverse2([],[]).
+reverse2([H|T],L):-reverse(T, L2), append([H], E, L).
 
 
 
